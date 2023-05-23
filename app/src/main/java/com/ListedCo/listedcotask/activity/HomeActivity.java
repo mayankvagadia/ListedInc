@@ -1,11 +1,13 @@
 package com.ListedCo.listedcotask.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,15 +18,16 @@ import com.ListedCo.listedcotask.api.Builder.Apibuilder;
 import com.ListedCo.listedcotask.api.Interface.ApiInterface;
 import com.ListedCo.listedcotask.api.response.RecentLink;
 import com.ListedCo.listedcotask.api.response.dashboardNew;
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.gson.JsonObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import retrofit2.Callback;
 
@@ -39,6 +42,7 @@ public class HomeActivity extends AppCompatActivity {
     public ArrayList<RecentLink> top_links;
     public JsonObject chartData;
     LineChart gr_chart;
+    ArrayList<String> dates;
 
 
     @Override
@@ -62,6 +66,7 @@ public class HomeActivity extends AppCompatActivity {
         gr_chart = findViewById(R.id.gr_chart);
         recent_links = new ArrayList<>();
         top_links = new ArrayList<>();
+        dates = new ArrayList<String>();
         rv_links.setLayoutManager(new LinearLayoutManager(this));
         adapter = new LinksAdapter(HomeActivity.this);
         rv_links.setAdapter(adapter);
@@ -131,47 +136,26 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setGraph() {
         ArrayList<Entry> series = new ArrayList<>();
-        series.add(new Entry(1f, chartData.get("2023-04-22").getAsFloat()));
-        series.add(new Entry(2f, chartData.get("2023-04-23").getAsFloat()));
-        series.add(new Entry(3f, chartData.get("2023-04-24").getAsFloat()));
-        series.add(new Entry(4f, chartData.get("2023-04-25").getAsFloat()));
-        series.add(new Entry(5f, chartData.get("2023-04-26").getAsFloat()));
-        series.add(new Entry(6f, chartData.get("2023-04-27").getAsFloat()));
-        series.add(new Entry(7f, chartData.get("2023-04-28").getAsFloat()));
-        series.add(new Entry(8f, chartData.get("2023-04-29").getAsFloat()));
-        series.add(new Entry(9f, chartData.get("2023-04-30").getAsFloat()));
-        series.add(new Entry(10f, chartData.get("2023-05-01").getAsFloat()));
-        series.add(new Entry(11f, chartData.get("2023-05-02").getAsFloat()));
-        series.add(new Entry(12f, chartData.get("2023-05-03").getAsFloat()));
-        series.add(new Entry(13f, chartData.get("2023-05-04").getAsFloat()));
-        series.add(new Entry(14f, chartData.get("2023-05-05").getAsFloat()));
-        series.add(new Entry(15f, chartData.get("2023-05-06").getAsFloat()));
-        series.add(new Entry(16f, chartData.get("2023-05-07").getAsFloat()));
-        series.add(new Entry(17f, chartData.get("2023-05-08").getAsFloat()));
-        series.add(new Entry(18f, chartData.get("2023-05-09").getAsFloat()));
-        series.add(new Entry(19f, chartData.get("2023-05-10").getAsFloat()));
-        series.add(new Entry(20f, chartData.get("2023-05-11").getAsFloat()));
-        series.add(new Entry(21f, chartData.get("2023-05-12").getAsFloat()));
-        series.add(new Entry(22f, chartData.get("2023-05-13").getAsFloat()));
-        series.add(new Entry(23f, chartData.get("2023-05-14").getAsFloat()));
-        series.add(new Entry(24f, chartData.get("2023-05-15").getAsFloat()));
-        series.add(new Entry(25f, chartData.get("2023-05-16").getAsFloat()));
-        series.add(new Entry(26f, chartData.get("2023-05-17").getAsFloat()));
-        series.add(new Entry(27f, chartData.get("2023-05-18").getAsFloat()));
-        series.add(new Entry(28f, chartData.get("2023-05-19").getAsFloat()));
-        series.add(new Entry(29f, chartData.get("2023-05-20").getAsFloat()));
-        series.add(new Entry(30f, chartData.get("2023-05-21").getAsFloat()));
-        series.add(new Entry(31f, chartData.get("2023-05-22").getAsFloat()));
-
+        float counter = 1f;
+        for (int i = 30; i >= 0; i--) {
+            Date date = new Date();
+            SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-dd");
+            Calendar c1 = Calendar.getInstance();
+            String currentDate = df.format(date);
+            c1.add(Calendar.DAY_OF_YEAR, -i);
+            df = new SimpleDateFormat("yyyy-MM-dd");
+            Date resultDate = c1.getTime();
+            dates.add(df.format(resultDate));
+            counter++;
+            series.add(new Entry(counter, chartData.get(df.format(resultDate)).getAsFloat()));
+        }
         LineDataSet set = new LineDataSet(series, "Graph");
         set.setCircleColor(getResources().getColor(R.color.main_background));
-//        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
         LineData data = new LineData(set);
         gr_chart.setData(data);
         gr_chart.setBackgroundColor(getResources().getColor(R.color.white));
-//        gr_chart.animateXY(2000, 2000, Easing.);
-
     }
 }
