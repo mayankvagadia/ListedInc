@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import retrofit2.Call;
 import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class HomeActivity extends AppCompatActivity {
@@ -114,7 +116,7 @@ public class HomeActivity extends AppCompatActivity {
     private void ApiCall() {
         Apibuilder.getRetrofitClient(this).create(ApiInterface.class).dashboardNew().enqueue(new Callback<dashboardNew>() {
             @Override
-            public void onResponse(retrofit2.Call<dashboardNew> call, retrofit2.Response<dashboardNew> response) {
+            public void onResponse(Call<dashboardNew> call, Response<dashboardNew> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         recent_links = response.body().data.recent_links;
@@ -136,7 +138,6 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     private void setGraph() {
         ArrayList<Entry> series = new ArrayList<>();
         float counter = 1f;
